@@ -1,5 +1,5 @@
-import { DiscordMessage } from '../types/discord.js';
-import { SendEmbedEvent, Message, SendMessageEvent, TgSendMessageEvent, TgSendEmbedEvent, BetaEmitter } from '../types/common.js';
+import { DiscordMessage } from '../types/discord.ts';
+import { SendEmbedEvent, Message, SendMessageEvent, TgSendMessageEvent, TgSendEmbedEvent, BetaEmitter } from '../types/common.ts';
 import { Attachment, Client, Collection } from 'discord.js';
 import { AttachmentBuilder, EmbedBuilder } from 'discord.js';
 

@@ -1,4 +1,4 @@
-import { Message, TgSendMessageEvent, TgSendEmbedEvent, BetaEmitter } from '../types/common.js';
+import { Message, TgSendMessageEvent, TgSendEmbedEvent, BetaEmitter } from '../types/common.ts';
 
 interface MessageDto extends TgSendMessageEvent { };
 interface EmbedDto extends TgSendEmbedEvent { };
