@@ -2,6 +2,7 @@ import { DiscordMessage } from '../types/discord.ts';
 import { SendEmbedEvent, Message, SendMessageEvent, TgSendMessageEvent, TgSendEmbedEvent, BetaEmitter } from '../types/common.ts';
 import { Attachment, Client, Collection } from 'discord.js';
 import { AttachmentBuilder, EmbedBuilder } from 'discord.js';
+import { readEnvValue } from '../services/readEnvValue.service.ts';
 
 interface MessageDto extends SendMessageEvent { client: any; }
 interface EmbedDto extends SendEmbedEvent { client: any; }
@@ -10,8 +11,7 @@ export class DiscordBot {
 	client: Client;
 	private readonly betaEmitter: BetaEmitter;
 	private readonly userChatIds: string[];
-	readonly test_server_channelId: string = '1159097400506454019';
-	readonly karacord_b_channelId: string = '1165277765881303161';
+	readonly discordChannelId: string = readEnvValue('DISCORD_CHANNEL');
 
 	constructor (client: any, betaEmitter: BetaEmitter, userChatIds: string[]) {
 		this.client = client;
@@ -25,7 +25,7 @@ export class DiscordBot {
 
 	processNewMessage = (msg: DiscordMessage) => {
 		// Check if the message should be processed
-		if (![this.karacord_b_channelId, this.test_server_channelId].includes(msg.channelId) || msg?.author.username === 'zak3.0') {
+		if (msg.channelId !== this.discordChannelId || msg?.author.id === this.client?.user?.id) {
 			return;
 		}
 		// Process text content
@@ -50,7 +50,7 @@ export class DiscordBot {
 		}
 	};
 	sendMessage = (messageData: MessageDto) => {
-		const channel: any = this.client.channels.cache.get(this.test_server_channelId);
+		const channel: any = this.client.channels.cache.get(this.discordChannelId);
 		const { author, textContent } = messageData.message;
 		if (channel) {
 			channel.send(`[${author}]: ${textContent}`);
@@ -64,7 +64,7 @@ export class DiscordBot {
 			.setTitle(embedData.caption)
 			.setImage(`attachment://${embedData.filepath}`);
 
-		const channel: any = this.client.channels.cache.get(this.test_server_channelId);
+		const channel: any = this.client.channels.cache.get(this.discordChannelId);
 		channel.send({ embeds: [embed], files: [file] });
 	};
 }
