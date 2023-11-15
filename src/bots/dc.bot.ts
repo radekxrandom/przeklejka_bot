@@ -6,7 +6,7 @@ import { AttachmentBuilder, EmbedBuilder } from 'discord.js';
 interface MessageDto extends SendMessageEvent { client: any; }
 interface EmbedDto extends SendEmbedEvent { client: any; }
 
-export class DcClient {
+export class DiscordBot {
 	client: Client;
 	private readonly betaEmitter: BetaEmitter;
 	private readonly userChatIds: string[];

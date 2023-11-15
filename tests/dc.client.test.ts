@@ -1,5 +1,5 @@
-import { DcClient } from '../clients/dc.client.ts';
-import { BetaEmitter } from '../types/common.ts';
+import { DiscordBot } from '../src/bots/dc.bot.ts';
+import { BetaEmitter } from '../src/types/common.ts';
 
 
 const betaEmitterMock: BetaEmitter = {
@@ -34,11 +34,11 @@ const clientMock = {
 
 
 // Test Suite
-describe('DcClient', () => {
-	let dcClient: any;
+describe('discordBot', () => {
+	let discordBot: any;
 
 	beforeEach(() => {
-		dcClient = new DcClient(clientMock, betaEmitterMock, userChatIdsMock);
+		discordBot = new DiscordBot(clientMock, betaEmitterMock, userChatIdsMock);
 	});
 
 	afterEach(() => {
@@ -49,7 +49,7 @@ describe('DcClient', () => {
 	it('processAttachments should return processed attachments', () => {
 		const author = 'testAuthor';
 		const attachments = [{ url: 'attachment1' }, { url: 'attachment2' }];
-		const result = dcClient.processAttachments(author, attachments);
+		const result = discordBot.processAttachments(author, attachments);
 
 		expect(result).toEqual([
 			{ caption: 'testAuthor wysyła bobrazek', filepath: 'attachment1', timestamp: expect.any(Number) },
@@ -65,7 +65,7 @@ describe('DcClient', () => {
 			content: 'Test message content',
 		};
 
-		dcClient.processNewMessage(discordMessage);
+		discordBot.processNewMessage(discordMessage);
 
 		expect(betaEmitterMock.emit).toHaveBeenCalledWith('sendTelegramMessage', {
 			message: {
@@ -86,7 +86,7 @@ describe('DcClient', () => {
 			},
 		};
 
-		dcClient.sendMessage(messageDto);
+		discordBot.sendMessage(messageDto);
 
 		expect(clientMock.channels.cache.get).toHaveBeenCalledWith('1159097400506454019');
 
@@ -100,7 +100,7 @@ describe('DcClient', () => {
 			filepath: 'testFilePath',
 		};
 
-		dcClient.sendEmbed(embedDto);
+		discordBot.sendEmbed(embedDto);
 
 		expect(clientMock.channels.cache.get).toHaveBeenCalledWith('1159097400506454019');
 

@@ -1,16 +1,16 @@
-import { SendEmbedEvent, Message, SendMessageEvent, TgSendMessageEvent, TgSendEmbedEvent, BetaEmitter } from '../types/common.js';
+import { Message, TgSendMessageEvent, TgSendEmbedEvent, BetaEmitter } from '../types/common.js';
 
 interface MessageDto extends TgSendMessageEvent { };
 interface EmbedDto extends TgSendEmbedEvent { };
 
-export class TgClient {
-	bot: any;
+export class TelegramBot {
+	client: any;
 	userChatIds: string[];
 	betaEmitter: BetaEmitter;
 	tgToken: string;
 
-	constructor (bot: any, betaEmitter: any, userChatIds: any, tgToken: string) {
-		this.bot = bot;
+	constructor (client: any, betaEmitter: any, userChatIds: any, tgToken: string) {
+		this.client = client;
 		this.betaEmitter = betaEmitter;
 		this.userChatIds = userChatIds;
 		this.tgToken = tgToken;
@@ -39,9 +39,9 @@ export class TgClient {
 		}
 		if (msg.document) {
 			this.userChatIds.filter((el: any) => el !== chatId).forEach((userId: string) => {
-				this.bot.sendDocument(chatId, msg.document.file_id);
+				this.client.sendDocument(chatId, msg.document.file_id);
 			});
-			this.bot.getFile(msg.document.file_id)
+			this.client.getFile(msg.document.file_id)
 				.then((fileInfo: any) => {
 					const filePath = fileInfo.file_path;
 					const fileUrl = `https://api.telegram.org/file/bot${this.tgToken}/${filePath}`;
@@ -61,13 +61,13 @@ export class TgClient {
 		const { author, textContent } = messageDto.message;
 
 		messageDto.receivingUsersIds.forEach((userId: any) => {
-			this.bot.sendMessage(userId, `[${author}]: ${textContent}`);
+			this.client.sendMessage(userId, `[${author}]: ${textContent}`);
 		});
 	};
 	sendEmbed = (embedDto: EmbedDto) => {
 		console.log('Sending telegram embed:', embedDto);
 		embedDto.receivingUsersIds.forEach((userId: any) => {
-			this.bot.sendDocument(userId, embedDto.filepath, { caption: embedDto.caption });
+			this.client.sendDocument(userId, embedDto.filepath, { caption: embedDto.caption });
 		});
 	};
 }

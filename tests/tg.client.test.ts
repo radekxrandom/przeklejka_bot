@@ -1,5 +1,5 @@
 // Import necessary dependencies and modules
-const { TgClient } = require('../tgClient.ts');
+const { TelegramBot } = require('../src/bots/tg.bot.ts');
 const EventEmitter = require('events');
 
 // Mock TelegramBot for testing purposes
@@ -11,9 +11,9 @@ const betaEmitter = new EventEmitter();
 // Mock userChatIds and TelegramBot instance
 const userChatIds: string[] = [];
 const bot = new (require('node-telegram-bot-api'))();
-const tgClient = new TgClient(bot, betaEmitter, userChatIds, 'tgToken');
+const telegramBot = new TelegramBot(bot, betaEmitter, userChatIds, 'tgToken');
 
-describe('TgClient', () => {
+describe('Telegram Bot Tests Suite', () => {
 	// Mock Telegram message for testing
 	const mockTelegramMessage = {
 		chat: { id: 123 },
@@ -61,14 +61,14 @@ describe('TgClient', () => {
 
 	describe('processNewMessage', () => {
 		test('should process a new text message', () => {
-			tgClient.processNewMessage(mockTelegramMessage);
+			telegramBot.processNewMessage(mockTelegramMessage);
 			expect(userChatIds).toContain(mockTelegramMessage.chat.id);
 			expect(betaEmitter.emit).toHaveBeenCalledWith('sendTelegramMessage', expect.any(Object));
 			expect(betaEmitter.emit).toHaveBeenCalledWith('sendDiscordMessage', expect.any(Object));
 		});
 
 		test('should process a new document message', async () => {
-			await tgClient.processNewMessage(mockTelegramDocument);
+			await telegramBot.processNewMessage(mockTelegramDocument);
 			expect(userChatIds).toContain(mockTelegramDocument.chat.id);
 			expect(bot.sendDocument).toHaveBeenCalledTimes(userChatIds.length - 1);
 			expect(betaEmitter.emit).toHaveBeenCalledWith('sendDiscordEmbed', expect.any(Object));
@@ -79,7 +79,7 @@ describe('TgClient', () => {
 
 	describe('sendMessage', () => {
 		test('should send a message to multiple users', () => {
-			tgClient.sendMessage(mockMessageDto);
+			telegramBot.sendMessage(mockMessageDto);
 			expect(bot.sendMessage).toHaveBeenCalledTimes(mockMessageDto.receivingUsersIds.length);
 		});
 
@@ -88,7 +88,7 @@ describe('TgClient', () => {
 
 	describe('sendEmbed', () => {
 		test('should send an embed to multiple users', () => {
-			tgClient.sendEmbed(mockEmbedDto);
+			telegramBot.sendEmbed(mockEmbedDto);
 			expect(bot.sendDocument).toHaveBeenCalledTimes(mockEmbedDto.receivingUsersIds.length);
 		});
 
