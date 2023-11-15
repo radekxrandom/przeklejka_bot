@@ -1,5 +1,5 @@
 import { DiscordMessage } from '../types/discord.ts';
-import { SendEmbedEvent, Message, SendMessageEvent, TgSendMessageEvent, TgSendEmbedEvent, BetaEmitter } from '../types/common.ts';
+import { SendEmbedEvent, Message, SendMessageEvent, BetaEmitter } from '../types/common.ts';
 import { Attachment, Client, Collection } from 'discord.js';
 import { AttachmentBuilder, EmbedBuilder } from 'discord.js';
 import { readEnvValue } from '../services/readEnvValue.service.ts';
@@ -37,7 +37,6 @@ export class DiscordBot {
 			};
 			console.log('Processing Discord text message:', standardizedMsg);
 
-			// Emit the message to Telegram
 			this.betaEmitter.emit('sendTelegramMessage', { message: standardizedMsg, receivingUsersIds: [...this.userChatIds] });
 		}
 
@@ -65,6 +64,10 @@ export class DiscordBot {
 			.setImage(`attachment://${embedData.filepath}`);
 
 		const channel: any = this.client.channels.cache.get(this.discordChannelId);
-		channel.send({ embeds: [embed], files: [file] });
+		if (channel) {
+			channel.send({ embeds: [embed], files: [file] });
+		} else {
+			console.error('Channel not found!');
+		}
 	};
 }

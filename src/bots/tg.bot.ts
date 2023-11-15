@@ -21,11 +21,10 @@ export class TelegramBot {
 		const chatId = msg.chat.id;
 		console.log(this.client);
 
-		// Check if the user's chat ID is not in the array, add it
 		if (!this.userChatIds.includes(chatId)) {
 			this.userChatIds.push(chatId);
 		}
-		if (msg.from.first_name === readEnvValue('TELEGRAM_BOT_NAME')) {// add regex here to check if
+		if (msg.from.first_name === readEnvValue('TELEGRAM_BOT_NAME')) {
 			return true;
 		}
 		if (msg.text && msg.text.length < 9000) {
