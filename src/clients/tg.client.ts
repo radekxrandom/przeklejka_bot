@@ -18,7 +18,6 @@ export class TgClient {
 
 	processNewMessage = (msg: any) => {
 		const chatId = msg.chat.id;
-		console.log('1. Telegram message: ', msg);
 
 		// Check if the user's chat ID is not in the array, add it
 		if (!this.userChatIds.includes(chatId)) {
@@ -33,6 +32,7 @@ export class TgClient {
 				timestamp: Date.now(),
 				textContent: msg.text
 			};
+			console.log('Processing Telegram text message:', standardizedMsg);
 			this.betaEmitter.emit('sendTelegramMessage', { message: standardizedMsg, receivingUsersIds: this.userChatIds.filter((el: any) => el !== chatId) });
 			this.betaEmitter.emit('sendDiscordMessage', { message: standardizedMsg });
 
@@ -43,22 +43,9 @@ export class TgClient {
 			});
 			this.bot.getFile(msg.document.file_id)
 				.then((fileInfo: any) => {
-					console.log('getting file');
-
-					// Get the file path
 					const filePath = fileInfo.file_path;
-
-					// Use the `getFileLink` method to get a direct link to the file
-					const fileLink = this.bot.getFileLink(msg.document.file_id);
-
 					const fileUrl = `https://api.telegram.org/file/bot${this.tgToken}/${filePath}`;
-					console.log('fileUrl: ', fileUrl);
 
-					// Log the file path and link (you can also use them as needed)
-					console.log(`File Path: ${filePath}`);
-					console.log(`File Link: ${fileLink}`);
-
-					console.log('File url: ' + fileUrl);
 					const caption = msg.caption ? `[${msg.from.first_name}]: ${msg.caption}` : `${msg.from.first_name} wysyła obrazek`;
 					this.betaEmitter.emit('sendDiscordEmbed', { caption, filepath: fileUrl, timestamp: Date.now() });
 				})
@@ -70,7 +57,7 @@ export class TgClient {
 	};
 
 	sendMessage = (messageDto: MessageDto) => {
-		console.log('2. sendTelegramMessage', messageDto);
+		console.log('Sending telegram message:', messageDto);
 		const { author, textContent } = messageDto.message;
 
 		messageDto.receivingUsersIds.forEach((userId: any) => {
@@ -78,7 +65,7 @@ export class TgClient {
 		});
 	};
 	sendEmbed = (embedDto: EmbedDto) => {
-		console.log('2. sendTelegramEmbed', embedDto);
+		console.log('Sending telegram embed:', embedDto);
 		embedDto.receivingUsersIds.forEach((userId: any) => {
 			this.bot.sendDocument(userId, embedDto.filepath, { caption: embedDto.caption });
 		});
