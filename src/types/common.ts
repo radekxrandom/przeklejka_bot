@@ -22,9 +22,6 @@ export interface TgSendMessageEvent extends SendMessageEvent {
 	receivingUsersIds: string[];
 }
 
-
-// we have file path and authors name
-
 export interface SendEmbedEvent {
 	caption: string;
 	filepath: string;
