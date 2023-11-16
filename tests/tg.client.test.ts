@@ -1,6 +1,7 @@
 // Import necessary dependencies and modules
 const { TelegramBot } = require('../src/bots/tg.bot.ts');
 const EventEmitter = require('events');
+require('dotenv').config();
 
 // Mock TelegramBot for testing purposes
 jest.mock('node-telegram-bot-api');

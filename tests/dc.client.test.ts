@@ -1,44 +1,36 @@
 import { DiscordBot } from '../src/bots/dc.bot.ts';
+import { readEnvValue } from '../src/services/readEnvValue.service.ts';
 import { BetaEmitter } from '../src/types/common.ts';
+require('dotenv').config();
+const EventEmitter = require('events');
 
 
-const betaEmitterMock: BetaEmitter = {
-	emit: jest.fn(),
-	on: jest.fn(),
-	addListener: jest.fn(),
-	once: jest.fn(),
-	removeListener: jest.fn(),
-	off: jest.fn(),
-	removeAllListeners: jest.fn(),
-	setMaxListeners: jest.fn(),
-	getMaxListeners: jest.fn(),
-	listeners: jest.fn(),
-	rawListeners: jest.fn(),
-	listenerCount: jest.fn(),
-	prependListener: jest.fn(),
-	prependOnceListener: jest.fn(),
-	eventNames: jest.fn(),
-};
+const betaEmitter = new EventEmitter();
+
 
 const userChatIdsMock = ['user1', 'user2'];
-const clientMock = {
-	channels: {
-		cache: {
-			get: jest.fn().mockReturnValue({
-				send: jest.fn(),
-			}),
-		},
-	},
-};
 
 
 
 // Test Suite
 describe('discordBot', () => {
 	let discordBot: any;
+	betaEmitter.emit = jest.fn();
+	const clientMock = {
+		channels: {
+			cache: {
+				get: jest.fn().mockReturnValue({
+					send: jest.fn(),
+				}),
+			},
+		},
+		user: {
+			id: '123'
+		}
+	};
 
 	beforeEach(() => {
-		discordBot = new DiscordBot(clientMock, betaEmitterMock, userChatIdsMock);
+		discordBot = new DiscordBot(clientMock, betaEmitter, userChatIdsMock);
 	});
 
 	afterEach(() => {
@@ -60,14 +52,15 @@ describe('discordBot', () => {
 	// Test Case 2
 	it('processNewMessage should emit events based on message content', () => {
 		const discordMessage = {
-			channelId: '1165277765881303161',
-			author: { username: 'testAuthor' },
+			channelId: readEnvValue('DISCORD_CHANNEL'),
+			author: { username: 'testAuthor', id: '100' },
 			content: 'Test message content',
 		};
 
 		discordBot.processNewMessage(discordMessage);
+		expect(betaEmitter.emit).toHaveBeenCalledWith('sendTelegramMessage', expect.any(Object));
 
-		expect(betaEmitterMock.emit).toHaveBeenCalledWith('sendTelegramMessage', {
+		expect(betaEmitter.emit).toHaveBeenCalledWith('sendTelegramMessage', {
 			message: {
 				author: 'testAuthor',
 				timestamp: expect.any(Number),
