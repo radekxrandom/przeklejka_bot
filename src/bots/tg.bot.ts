@@ -19,7 +19,6 @@ export class TelegramBot {
 
 	processNewMessage = (msg: any) => {
 		const chatId = msg.chat.id;
-		console.log(this.client);
 
 		if (!this.userChatIds.includes(chatId)) {
 			this.userChatIds.push(chatId);
